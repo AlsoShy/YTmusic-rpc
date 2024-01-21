@@ -9,7 +9,7 @@ var tempTime = '0:00';
 
 console.log('Starting YouTubeMusicDiscordRichPresence...');
 
-client.login({ clientId: '1198414739659829378' });
+client.login({ clientId: 'applicationID' });
 
 update(song, artist);
 
