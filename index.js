@@ -42,7 +42,7 @@ app.listen(3000, () => {
 
 function update(song, artist, timeNow, timeMax) {
     // Use YouTube API to get the video thumbnail URL
-    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=AIzaSyCYSqTEq4Hjdx0qqokab8Lq7xgwYfvWXK8&type=video&part=snippet&maxResults=1`)
+    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=YOUTUBE_API&type=video&part=snippet&maxResults=1`)
         .then(response => {
             const videoId = response.data.items[0].id.videoId; // Define videoId here
             const thumbnailUrl = response.data.items[0].snippet.thumbnails.high.url;
