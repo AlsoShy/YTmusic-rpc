@@ -28,7 +28,7 @@ app.post("/", (request, response) => {
     tempTime = content.timeMax.replace(' ', '');
     song = content.song;
 
-    console.log(`Playing now:\n"${content.song}"\nby\n${content.artist}\nTime left: ${content.timeMax.replace(' ', '')}`);
+    console.log(`Playing now:\n**${content.song}**\nby\n${content.artist}\nTime left: ${content.timeMax.replace(' ', '')}`);
     update(content.song, content.artist, Date.now(), timeToMilli(content.timeMax.replace(' ', '')));
     response.sendStatus(200);
 });
@@ -37,29 +37,24 @@ app.listen(3000, () => {
     console.log('Ready Senpai! Listening on port 3000...');
     setInterval(() => {
         update(song, artist, Date.now(), timeToMilli(tempTime));
-    }, 15000); // Check for a new song every 15 seconds
+    }, 60000);
 });
 
 function update(song, artist, timeNow, timeMax) {
     // Use YouTube API to get the video thumbnail URL
-    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=AIzaSyCH14YDD1TMEJXta0MoWHyqpVRaah3h1Yg&type=video&part=snippet&maxResults=1`)
+    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=YOUR_YT_API_KEY&type=video&part=snippet&maxResults=1`)
         .then(response => {
             const videoId = response.data.items[0].id.videoId; // Define videoId here
-            let thumbnailUrl;
-            if (response.data.items[0].snippet.thumbnails.high) {
-                thumbnailUrl = response.data.items[0].snippet.thumbnails.high.url;
-            } else {
-                thumbnailUrl = response.data.items[0].snippet.thumbnails.default.url;
-            }
+            const thumbnailUrl = response.data.items[0].snippet.thumbnails.high.url;
 
             client.setActivity({
-                details: song,
-                state: artist,
+                details: `**${song}**`,
+                state: `by ${response.data.items[0].snippet.artist}`, // Explicitly use the artist property
                 startTimestamp: timeNow,
                 endTimestamp: timeMax,
                 largeImageKey: thumbnailUrl,
                 largeImageText: 'Listening to YouTube Music', // Tooltip text
-                largeImageScale: 0.95, // 5% smaller
+                largeImageScale: 1, // Stretch the image equally
                 instance: true,
                 buttons: [
                     { label: 'Listen Along', url: `https://www.youtube.com/watch?v=${videoId}&t=${Math.floor(timeNow / 1000)}` }
@@ -77,9 +72,4 @@ function timeToMilli(time) {
         temp += Math.round(parseFloat(time.split(':')[0]) * 60000);
         temp += Math.round(parseFloat(time.split(':')[1]) * 1000);
     } else if (time.split(':').length == 3) {
-        temp += Math.round(parseFloat(time.split(':')[0]) * 3600000);
-        temp += Math.round(parseFloat(time.split(':')[1]) * 60000);
-        temp += Math.round(parseFloat(time.split(':')[2]) * 1000);
-    }
-    return temp;
-}
+        temp +=
