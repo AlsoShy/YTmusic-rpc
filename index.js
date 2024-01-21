@@ -9,7 +9,7 @@ var tempTime = '0:00';
 
 console.log('Starting YouTubeMusicDiscordRichPresence...');
 
-client.login({ clientId: 'applicationID' });
+client.login({ clientId: '1198414739659829378' });
 
 update(song, artist);
 
@@ -37,15 +37,20 @@ app.listen(3000, () => {
     console.log('Ready Senpai! Listening on port 3000...');
     setInterval(() => {
         update(song, artist, Date.now(), timeToMilli(tempTime));
-    }, 60000);
+    }, 15000); // Check for a new song every 15 seconds
 });
 
 function update(song, artist, timeNow, timeMax) {
     // Use YouTube API to get the video thumbnail URL
-    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=YOUTUBE_API&type=video&part=snippet&maxResults=1`)
+    axios.get(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(song)}&key=AIzaSyCH14YDD1TMEJXta0MoWHyqpVRaah3h1Yg&type=video&part=snippet&maxResults=1`)
         .then(response => {
             const videoId = response.data.items[0].id.videoId; // Define videoId here
-            const thumbnailUrl = response.data.items[0].snippet.thumbnails.high.url;
+            let thumbnailUrl;
+            if (response.data.items[0].snippet.thumbnails.high) {
+                thumbnailUrl = response.data.items[0].snippet.thumbnails.high.url;
+            } else {
+                thumbnailUrl = response.data.items[0].snippet.thumbnails.default.url;
+            }
 
             client.setActivity({
                 details: song,
